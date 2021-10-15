@@ -71,7 +71,6 @@ const App = () => {
     let newVotes = [...votes]
     newVotes[selected]++
     setVotes(newVotes)
-    console.log(votes)
   }
 
   return (
