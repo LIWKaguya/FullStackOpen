@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import formServices from './services/base'
 import Person from './Person'
-import axios from 'axios'
 
 const Filter = ({newTerm, handles}) => {
   return (
@@ -47,8 +47,7 @@ const App = (props) => {
   }
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
+    formServices.getAll()
       .then(response => {
         setPersons(response.data)
       })
@@ -62,14 +61,20 @@ const App = (props) => {
     }
     if(persons.some(per => per.name === newName))
     {
-      alert(`${newName} is already added to the phonebook`)
+      if(window.confirm(`${person.name} is already in the phonebook. Do you want to update the number ?`))
+      {
+        const identical = persons.filter(per => per.name === newName)
+        person.id = identical[0].id  
+        formServices.update(person)
+      }
     }
     else
     {
+      formServices.create(person)
       setPersons(persons.concat(person))
-      setNewName('')
-      setNewNumber('')
     }
+    setNewName('')
+    setNewNumber('')
   }
   
   const handles = [handleNameChange, handleNumberChange, handleTermChange]
