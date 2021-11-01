@@ -4,6 +4,7 @@ import formServices from './services/base'
 const Person = ({ person }) => {
   const confirmDelete = () => {
     formServices.terminate(person)
+    .catch()
   }
 
   return (

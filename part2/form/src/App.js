@@ -1,6 +1,31 @@
 import React, { useState, useEffect } from 'react'
 import formServices from './services/base'
 import Person from './Person'
+import './index.css'
+
+const Unsuscessfully = ({unsuscessMessage}) => {
+  if(unsuscessMessage === null)
+  {
+    return null
+  }
+  return (
+      <div className="error">
+        {unsuscessMessage}
+      </div>
+    )
+}
+
+const Suscessfully = ({suscessMessage}) => {
+  if(suscessMessage === null) {
+    return null
+  }
+  else
+  {
+    return (
+      <p className="suscess">{suscessMessage}</p>
+    )
+  }
+}
 
 const Filter = ({newTerm, handles}) => {
   return (
@@ -33,6 +58,8 @@ const App = (props) => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ newTerm, setNewTerm ] = useState('')
+  const [ suscessMessage, setSuscessMessage ] = useState(null)
+  const [ unsuscessMessage, setUnsuscessMessage ] = useState(null)
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -66,28 +93,38 @@ const App = (props) => {
         const identical = persons.filter(per => per.name === newName)
         person.id = identical[0].id  
         formServices.update(person)
+        .catch(error => {
+          setUnsuscessMessage(`${person.name} has already been deleted`)
+          setTimeout(() => {
+            setUnsuscessMessage(null)
+          }, 5000)
+      })
       }
     }
     else
     {
       formServices.create(person)
-      setPersons(persons.concat(person))
+      .then(setPersons(persons.concat(person)))
+      .then(setSuscessMessage(`${person.name} added to the phone book`))
+      .then(setTimeout(() => {setSuscessMessage(null)}, 5000))
     }
     setNewName('')
     setNewNumber('')
   }
-  
+
   const handles = [handleNameChange, handleNumberChange, handleTermChange]
   const news = [newName, newNumber, newTerm]
   const filteredPersons = persons.filter(person => person.name.toLowerCase().includes(newTerm.toLowerCase()))
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <Suscessfully suscessMessage={suscessMessage}/>
+      <Unsuscessfully unsuscessMessage={unsuscessMessage}/>
+      <h1>Phonebook</h1>
       <Filter newTerm={newTerm} handles={handles}/>
-      <h2>Add a new</h2>
+      <h1>Add a new</h1>
       <Form addPerson={addPerson} handles={handles} news={news}/>
-      <h2>Numbers</h2>
+      <h1>Numbers</h1>
       <ShowPersons persons={filteredPersons} />
     </div>
   )
