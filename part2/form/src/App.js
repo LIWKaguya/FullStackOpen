@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Person from './Person'
+import axios from 'axios'
 
 const Filter = ({newTerm, handles}) => {
   return (
@@ -44,6 +45,14 @@ const App = (props) => {
   const handleTermChange = (event) => {
     setNewTerm(event.target.value)
   }
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data)
+      })
+  }, [])
 
   const addPerson= (event) => {
     event.preventDefault()
