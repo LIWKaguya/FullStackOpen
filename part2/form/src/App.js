@@ -86,28 +86,25 @@ const App = (props) => {
       name: newName,
       number: newNumber
     }
-    if(persons.some(per => per.name === newName))
-    {
-      if(window.confirm(`${person.name} is already in the phonebook. Do you want to update the number ?`))
-      {
-        const identical = persons.filter(per => per.name === newName)
-        person.id = identical[0].id  
-        formServices.update(person)
-        .catch(error => {
-          setUnsuscessMessage(`${person.name} has already been deleted`)
-          setTimeout(() => {
-            setUnsuscessMessage(null)
-          }, 5000)
-      })
-      }
-    }
-    else
-    {
+    // if(persons.some(per => per.name === newName))
+    // {
+    //   if(window.confirm(`${person.name} is already in the phonebook. Do you want to update the number ?`))
+    //   {
+    //     const identical = persons.filter(per => per.name === newName)
+    //     person.id = identical[0].id  
+    //     formServices.update(person)
+    //     .catch(error => {
+    //       setUnsuscessMessage(`${person.name} has already been deleted`)
+    //       setTimeout(() => {
+    //         setUnsuscessMessage(null)
+    //       }, 5000)
+    //   })
+    //   }
+    // }
       formServices.create(person)
       .then(setPersons(persons.concat(person)))
       .then(setSuscessMessage(`${person.name} added to the phone book`))
       .then(setTimeout(() => {setSuscessMessage(null)}, 5000))
-    }
     setNewName('')
     setNewNumber('')
   }
