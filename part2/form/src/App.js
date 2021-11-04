@@ -76,7 +76,7 @@ const App = (props) => {
   useEffect(() => {
     formServices.getAll()
       .then(response => {
-        setPersons(response.data)
+        setPersons(response)
       })
   }, [])
 
@@ -86,25 +86,39 @@ const App = (props) => {
       name: newName,
       number: newNumber
     }
-    // if(persons.some(per => per.name === newName))
-    // {
-    //   if(window.confirm(`${person.name} is already in the phonebook. Do you want to update the number ?`))
-    //   {
-    //     const identical = persons.filter(per => per.name === newName)
-    //     person.id = identical[0].id  
-    //     formServices.update(person)
-    //     .catch(error => {
-    //       setUnsuscessMessage(`${person.name} has already been deleted`)
-    //       setTimeout(() => {
-    //         setUnsuscessMessage(null)
-    //       }, 5000)
-    //   })
-    //   }
-    // }
+    if(persons.some(per => per.name === newName))
+    {
+      if(window.confirm(`${person.name} is already in the phonebook. Do you want to update the number ?`))
+      {
+        const identical = persons.filter(per => per.name === newName)
+        person.id = identical[0].id  
+        formServices.update(person)
+        .catch(error => {
+          console.log(error)
+          setUnsuscessMessage(`${person.name} has already been deleted`)
+          setTimeout(() => {
+            setUnsuscessMessage(null)
+          }, 5000)
+      })
+      }
+    }
+    if(person.name.length < 3 || person.number.length < 8)
+    {
       formServices.create(person)
-      .then(setPersons(persons.concat(person)))
+      .catch(error => {
+        console.log(error.response.data)
+        setUnsuscessMessage(error.response.data)
+        setTimeout(() => {setUnsuscessMessage(null)}, 5000)
+      })
+    }
+    else
+    {
+      formServices.create(person)
       .then(setSuscessMessage(`${person.name} added to the phone book`))
       .then(setTimeout(() => {setSuscessMessage(null)}, 5000))
+      .then(setPersons(persons.concat(person)))
+    }
+      
     setNewName('')
     setNewNumber('')
   }
